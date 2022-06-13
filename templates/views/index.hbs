@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="./css/styles.css">
+        <link rel="icon" href="/img/weather.webp">
+        <script src="./js/main.js"></script>
+        <title>Weather</title>
+    </head>
+    <body>
+        <div class="main-content">
+            {{>header}}
+            <p></p>
+
+            <form enctype="multipart/form-data" action="/fileupload" method="POST" name="filetoupload" >
+                <input id="image_file" type="file" name="input_img" onChange="showInputImage()">
+                <br>
+                <br>
+                <label for="filter">Choose a filter</label>
+                <select name="filter">
+                  <option value="copy" selected>Copy</option>
+                  <option value="negative">Negative</option>
+                  <option value="mirror">Mirror</option>
+                  <option value="edges">Edges</option>
+                  <option value="caricature">Caricature</option>
+                </select>
+                <br>
+                <br>
+                <input type="submit" value="Upload">
+            </form>
+
+
+            <div id="input_img" class='input_img_container'></div>
+        </div>
+        {{>footer}}
+
+    </body>
+</html>
