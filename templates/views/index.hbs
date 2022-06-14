@@ -13,20 +13,22 @@
             <p></p>
 
             <form enctype="multipart/form-data" action="/fileupload" method="POST" name="filetoupload" >
-                <input id="image_file" type="file" name="input_img" onChange="showInputImage()">
+                <input id="image_file" type="file" name="input_img" onChange="preprocessFile()" required>
                 <br>
                 <br>
-                <label for="filter">Choose a filter</label>
+                <!-- <label for="filter">Choose a filter</label>
                 <select name="filter">
                   <option value="copy" selected>Copy</option>
                   <option value="negative">Negative</option>
                   <option value="mirror">Mirror</option>
                   <option value="edges">Edges</option>
                   <option value="caricature">Caricature</option>
-                </select>
+                </select> -->
+                <label for="Show preview">Show preview</label>
+                <input id="show_preview" type="checkbox" name="Show preview" value="">
                 <br>
                 <br>
-                <input type="submit" value="Upload">
+                <input id="upload_image_button" type="submit" disabled value="Upload">
             </form>
 
 
