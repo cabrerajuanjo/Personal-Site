@@ -17,8 +17,7 @@ body{
 
 .input_img_container
 {
-    border: 1px solid;
-    margin: auto;
+    margin: auto
 }
 
 
@@ -62,3 +61,4 @@ button{
     color: white;
     padding: 10px;
 }
+ 

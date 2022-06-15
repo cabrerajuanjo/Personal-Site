@@ -23,16 +23,17 @@ const storage = multer.diskStorage({
 })
 const upload = multer({storage})
 
-
 const viewsPath = path.join(__dirname, '../templates/views');
- 
+const partialsPath = path.join(__dirname, '../templates/partials')
+
 app.set('view engine', 'hbs');
 app.set('views', viewsPath);
-hbs.registerPartials((path.join(__dirname, '../templates/partials')))
+
+hbs.registerPartials(partialsPath)
 
 app.use(cors())
 app.use(express.static(path.join(__dirname, '../public')))
-//app.use(upload())
+
 
 app.get('', (req, res) => {
     res.render('index', {
@@ -40,13 +41,16 @@ app.get('', (req, res) => {
         name: 'Juanjo'})
 })
 
-app.get('/filter', (req, res) => {
-    filter.filter("", "")
+app.get('/filter/upload', (req, res) => {
+    res.render('upload', {
+        title: 'Upload Image',
+        name: 'Juanjo'
+    })
+    //filter.filter("", "")
 })
 
-app.post('/fileupload', upload.single('input_img'), (req, res) => {
-    console.log(req.body.filter)
-    return res.json({status:"ok"})
+app.post('/filter/set-filter', upload.single('input_img'), (req, res) => {
+    res.render('set-filter', {})
 
 })
 

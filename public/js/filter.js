@@ -1,3 +1,4 @@
+//Checks if file signature matches the one given for a particular test (png, jpg, etc)
 const bufferArrayArrayComparator =  (bufferBinaryArray, array) => {
     bufferSignature = bufferBinaryArray.slice(0, array.length);
     console.log(bufferSignature)
@@ -22,6 +23,7 @@ const disableUpload = () => {
     document.getElementById("upload_image_button").setAttribute('disabled', '');
 }
 
+//Show image on browser
 const showInputImage = (imageInput) => {
     const reader = new FileReader()
     reader.readAsDataURL(imageInput.files[0])
@@ -33,17 +35,13 @@ const showInputImage = (imageInput) => {
 }
 
 const preprocessFile = () => {
-    //Show image on browser
-    const imageInput = document.getElementById("image_file")
-
-
-
     //Checks for valid image type
-    const buffer = new FileReader()
-    buffer.readAsArrayBuffer(imageInput.files[0])
+    const imageInput = document.getElementById("image_file");
+    const buffer = new FileReader();
+    buffer.readAsArrayBuffer(imageInput.files[0]);
 
     buffer.addEventListener("load", () => {
-        bufferBinaryArray = new Uint8Array(buffer.result)
+        bufferBinaryArray = new Uint8Array(buffer.result);
 
         pngFileSignature = [ 137, 80, 78, 71, 13, 10, 26 ];
         jpgFileSignature = [255, 216, 255];
@@ -92,7 +90,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
         if(!showPreview.checked)
         {
             document.getElementById("input_img").innerHTML = "";
-        }else
+        }else if(document.getElementById("image_file").files[0])
         {
             preprocessFile();
         }

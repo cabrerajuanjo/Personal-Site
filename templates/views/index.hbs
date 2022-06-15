@@ -2,38 +2,15 @@
 <html lang="en" dir="ltr">
     <head>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="./css/styles.css">
+        <link rel="stylesheet" href="/css/styles.css">
         <link rel="icon" href="/img/weather.webp">
-        <script src="./js/main.js"></script>
-        <title>Weather</title>
+        <!-- <script src="/js/main.js"></script> -->
+        <title>{{title}}</title>
     </head>
     <body>
         <div class="main-content">
             {{>header}}
-            <p></p>
 
-            <form enctype="multipart/form-data" action="/fileupload" method="POST" name="filetoupload" >
-                <input id="image_file" type="file" name="input_img" onChange="preprocessFile()" required>
-                <br>
-                <br>
-                <!-- <label for="filter">Choose a filter</label>
-                <select name="filter">
-                  <option value="copy" selected>Copy</option>
-                  <option value="negative">Negative</option>
-                  <option value="mirror">Mirror</option>
-                  <option value="edges">Edges</option>
-                  <option value="caricature">Caricature</option>
-                </select> -->
-                <label for="Show preview">Show preview</label>
-                <input id="show_preview" type="checkbox" name="Show preview" value="">
-                <br>
-                <br>
-                <input id="upload_image_button" type="submit" disabled value="Upload">
-            </form>
-
-
-            <div id="input_img" class='input_img_container'></div>
-        </div>
         {{>footer}}
 
     </body>
