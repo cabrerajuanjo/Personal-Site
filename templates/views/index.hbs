@@ -4,13 +4,14 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="/css/styles.css">
         <link rel="icon" href="/img/weather.webp">
-        <!-- <script src="/js/main.js"></script> -->
+        <script src="/js/main.js"></script>
         <title>{{title}}</title>
     </head>
     <body>
         <div class="main-content">
-            {{>header}}
 
+        {{>header}}
+        <div id="sessionID" style="display:none;">{{sessionID}}</div>
         {{>footer}}
 
     </body>

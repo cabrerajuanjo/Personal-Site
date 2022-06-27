@@ -49,7 +49,7 @@ header a{
     width:200px;
 }
 
-input{
+input, select{
     border: 1px solid #cccccc;
     padding: 8px;
 }
@@ -61,4 +61,3 @@ button{
     color: white;
     padding: 10px;
 }
- 

@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="../css/styles.css">
         <link rel="icon" href="/img/weather.webp">
-        <script src="../js/filter.js"></script>
+        <script src="../js/upload.js" type="text/javascript"></script>
         <title>{{title}}</title>
     </head>
     <body>
@@ -12,21 +12,26 @@
             {{>header}}
             <p></p>
 
-            <form enctype="multipart/form-data" action="/filter/set-filter" method="POST" name="filetoupload" >
+            <form enctype="multipart/form-data" action="/filter/result" method="POST" name="filetoupload" >
                 <input id="image_file" type="file" name="input_img" onChange="preprocessFile()" required>
-                <!-- <label for="filter">Choose a filter</label>
-                <select name="filter">
+                <input id="show_preview" type="checkbox" name="Show preview" value="">
+                <label for="Show preview">Show preview</label>
+                <br>
+                <br>
+                <label for="filter">Choose a filter</label>
+                <select id="filter" name="filter" onChange="displayOptions()">
                   <option value="copy" selected>Copy</option>
                   <option value="negative">Negative</option>
                   <option value="mirror">Mirror</option>
                   <option value="edges">Edges</option>
                   <option value="caricature">Caricature</option>
-                </select> -->
-                <input id="show_preview" type="checkbox" name="Show preview" value="">
-                <label for="Show preview">Show preview</label>
+                </select>
                 <br>
                 <br>
-                <input id="upload_image_button" type="submit" disabled value="Upload">
+                <div id="filter-option-container" >
+                </div>
+                <input id="userID" name="userID" type="hidden" value="asdada">
+                <input type="submit" id="get-processed-image-button" value="Get processed image"  type="submit" disabled value="Upload">
             </form>
 
 
