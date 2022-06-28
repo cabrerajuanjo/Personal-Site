@@ -2,7 +2,9 @@ const express = require('express');
 const path = require('path');
 const hbs = require('hbs');
 const uuid = require('uuid').v4;
-const filterRouter = require('./routers/filter');
+const {filterRouter, userFilesLookup} = require('./routers/filter');
+
+
 
 //Load Express and set port
 const app = express();
@@ -22,7 +24,11 @@ app.use(express.static(path.join(__dirname, '../public')))
 
 app.get('', (req, res) => {
     sessionID = (uuid());
-    console.log(sessionID);
+
+    userFilesLookup.push({
+        [sessionID]: ''
+    });
+
     res.render('index', {
         title: 'Main',
         name: 'Juanjo',
