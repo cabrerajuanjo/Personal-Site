@@ -1,14 +1,17 @@
 const express = require('express');
 const path = require('path');
 const hbs = require('hbs');
-const uuid = require('uuid').v4;
-const {filterRouter, userFilesLookup} = require('./routers/filter');
+const {
+    filterRouter,
+    userFilesLookup} = require('./routers/filter');
+const {mainRender,
+    cleanUserArray} = require('./utils/user');
 
 
 
 //Load Express and set port
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 //Configure handlebars
 app.set('view engine', 'hbs');
@@ -21,21 +24,11 @@ app.use(filterRouter)
 //Set static files directory
 app.use(express.static(path.join(__dirname, '../public')))
 
+//Clean userFilesLookup periodically
+// setInterval(cleanUserArray, 10000);
 
 app.get('', (req, res) => {
-    sessionID = (uuid());
-
-    userFilesLookup.push({
-        [sessionID]: ''
-    });
-
-    res.render('index', {
-        title: 'Main',
-        name: 'Juanjo',
-        sessionID
-    })
-
-
+    mainRender(res);
 })
 
 app.get('/about', (req, res) => {

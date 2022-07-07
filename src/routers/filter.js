@@ -3,10 +3,16 @@ const filter = require('../utils/filtro.js');
 const path = require('path');
 const multer = require('multer');
 const uuid = require('uuid').v4;
+const {
+    userFilesLookup,
+    generateNewUser,
+    cleanUserArray,
+    validatorMiddleware,
+    doesUserHaveValidID} = require('../utils/user')
 
 const router = new express.Router();
 
-const userFilesLookup = []
+
 
 // const formParse = multer();
 
@@ -19,6 +25,8 @@ const storage = multer.diskStorage({
         cb(null,path.join(__dirname, '../../uploads/'));
     },
     filename: (req, file, cb) => {
+        const id = uuid()
+
         cb(null, uuid() + '-' + file.originalname);
     }
 })
@@ -28,28 +36,11 @@ const upload = multer({
     limits: {
         fileSize: 10000000
     },
-    // fileFilter(req, file, cb){
-    //     cb(new Error("File must be either JPG, PNG or PNM"))
-    // }
+
 })
 
-const validator = (req, res, next) => {
-    const user = userFilesLookup.forEach((user) => {
-
-        if (user[req.body.userID] || user[req.body.userID] == '')
-        {
-            (userFilesLookup[userFilesLookup.findIndex(element => user)])[req.body.userID] = req.file.filename;
-            console.log(userFilesLookup);
-            next();
-        }
-    })
-
-    console.log("ERROR");
-    res.status(403).send;
-}
-
 router.get('/filter/upload', (req, res) => {
-    console.log(userFilesLookup)
+    console.log("FILTER", userFilesLookup)
     res.render('upload', {
         title: 'Upload Image',
         name: 'Juanjo'
@@ -57,7 +48,7 @@ router.get('/filter/upload', (req, res) => {
     //filter.filter("", "")
 })
 
-router.post('/filter/result', upload.single('input_img'), validator, (req, res) => {
+router.post('/filter/result', upload.single('input_img'), validatorMiddleware, (req, res) => {
     console.log("File name on server ", req.file.filename);
     console.log("File path on server ", req.file.path);
     console.log("Original name ", req.file.originalname);
@@ -71,6 +62,5 @@ router.post('/filter/result', upload.single('input_img'), validator, (req, res) 
 const filterRouter = router;
 
 module.exports = {
-    filterRouter,
-    userFilesLookup
+    filterRouter
 };
