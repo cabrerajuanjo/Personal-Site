@@ -61,7 +61,7 @@ var scheduleCleanup = new cronJob(
 	true,
 	'America/Montevideo'
 );
-//PARECE ESTAR RESUELTO
+
 const validatorMiddleware = (req, res, next) => {
     var foundID = false;
     const user = userFilesLookup.forEach((user, index) => {
