@@ -1,8 +1,11 @@
 const express = require('express');
-const filter = require('../utils/filtro.js');
 const path = require('path');
 const multer = require('multer');
 const uuid = require('uuid').v4;
+const {
+    filter,
+    convertFileToPPM,
+    convertToOriginalFileType}  = require('../utils/filtro.js');
 const {
     userFilesLookup,
     generateNewUser,
@@ -11,10 +14,6 @@ const {
     doesUserHaveValidID} = require('../utils/user')
 
 const router = new express.Router();
-
-
-
-// const formParse = multer();
 
 router.use(express.urlencoded({
   extended: true
@@ -25,8 +24,6 @@ const storage = multer.diskStorage({
         cb(null,path.join(__dirname, '../../uploads/'));
     },
     filename: (req, file, cb) => {
-        const id = uuid()
-
         cb(null, uuid() + '-' + file.originalname);
     }
 })
@@ -48,15 +45,24 @@ router.get('/filter/upload', (req, res) => {
     //filter.filter("", "")
 })
 
-router.post('/filter/result', upload.single('input_img'), validatorMiddleware, (req, res) => {
+router.post('/filter/result', upload.single('input_img'), validatorMiddleware, async (req, res) => {
     console.log("File name on server ", req.file.filename);
     console.log("File path on server ", req.file.path);
     console.log("Original name ", req.file.originalname);
     console.log("Filter options", req.body);
 
-    res.render('result', {
-        title: 'Result'
-    })
+    const out = convertFileToPPM(req.file.filename, 'out-' + req.file.filename + '.ppm', () => {
+        filter('out-' + req.file.filename + '.ppm', req.body.filter, req.body.filter_option, req.file.filename + '.ppm', () => {
+            convertToOriginalFileType(req.file.filename + '.ppm', req.file.filename, () => {
+                res.render('result', {
+                    title: 'Result',
+                    image: req.file.filename
+                })
+            });
+        });
+    });
+
+
 })
 
 const filterRouter = router;

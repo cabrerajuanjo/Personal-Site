@@ -12,21 +12,21 @@
 
 int leer_imagen(const char* ruta, Imagen* pimg)
 {
-	FILE *fimg; 
+	FILE *fimg;
 	fimg = fopen(ruta, "rb");
 	if (fimg != NULL)
 	{
 		char magic_num[3];
 		int n, m, M;
 		TipoImagen t_in;
-		
+
 		/*Leo encabezado de la imagen*/
 		CodigoError err_leer_enc = leer_encabezado(fimg, magic_num, &n, &m, &M);
 		if(err_leer_enc != PNM_OK) return err_leer_enc;
 
-		
+
 		printf("magic number : %s; n : %d ; m : %d ; M : %d\n", magic_num, n, m, M);
-		
+
 		if (strcmp(magic_num, "P2") == 0)
 			t_in = GRISES;
 		else if (strcmp(magic_num, "P6") == 0)
@@ -38,22 +38,22 @@ int leer_imagen(const char* ruta, Imagen* pimg)
 		if (inicializar_imagen(n, m, t_in, pimg) != PNM_OK) return PNM_ENCABEZADO_INVALIDO;
 
 		fgetc(fimg);/*Posiciono el puntero en los datos de la imagen*/
-		
+
 		unsigned int i = 0;
 		if((*pimg).tipo == COLOR)
 		{
 			while ((!feof(fimg)) && (i < (pimg->ancho) * (pimg->alto)))
-			{	
+			{
 				#define CATCH_ERR_EOF_ENTRE_CAN(C) if((C) == EOF) return PNM_DATOS_INVALIDOS
 				#define CATCH_ERR_EOF_PREMATURO(C) if(((C) == EOF) && ((i + 1) < (pimg->ancho) * (pimg->alto))) \
 													return PNM_DATOS_INVALIDOS
 
 				byte c, r, g, b;
-				r = fgetc(fimg); CATCH_ERR_EOF_ENTRE_CAN(r); 
+				r = fgetc(fimg); CATCH_ERR_EOF_ENTRE_CAN(r);
 				g = fgetc(fimg); CATCH_ERR_EOF_ENTRE_CAN(g);
 				b = fgetc(fimg); CATCH_ERR_EOF_ENTRE_CAN(b);
 
-							
+
 				c = fgetc(fimg);
 				CATCH_ERR_EOF_PREMATURO(c);
 				#undef CATCH_ERR_EOF_ENTRE_CAN
@@ -62,7 +62,7 @@ int leer_imagen(const char* ruta, Imagen* pimg)
 
 				Pixel pix;
 				convertir_pixel_int(&r, &g, &b, &pix, "CanalesAInt");
-		
+
 				*((pimg->pixels) + i) = pix;
 				i++;
 			}
@@ -93,9 +93,9 @@ int escribir_imagen(const Imagen* pimg, const char* ruta)
 	FILE *fimg = fopen(ruta, "wb");
 	if (fimg != NULL)
 	{
-		fprintf(fimg, "%s\n%d %d\n%d\n", ((*pimg).tipo == GRISES? "P2" : "P6"), 
-										 (*pimg).ancho, 
-										 (*pimg).alto, 
+		fprintf(fimg, "%s\n%d %d\n%d\n", "P6",
+										 (*pimg).ancho,
+										 (*pimg).alto,
 										 (*pimg).valor_maximo);
 		unsigned int i = 0;
 		if((*pimg).tipo == COLOR)
@@ -106,19 +106,20 @@ int escribir_imagen(const Imagen* pimg, const char* ruta)
 			{
 				pix = *((pimg->pixels) + i);
 				convertir_pixel_int(&r, &g, &b, &pix, "IntACanales");
-	
+
 				fputc(r, fimg); /*R*/fputc(g, fimg); /*G*/fputc(b, fimg);/*B*/
-			
+
 				i++;
 			}
 		}else
 		{
-			while(i < ((((*pimg).ancho) * ((*pimg).alto)) - 1))
+			while(i < (((*pimg).ancho) * ((*pimg).alto)))
 			{
-				fprintf(fimg,"%d ", *((pimg->pixels) + i));
+				byte by = *((pimg->pixels) + i);
+				fputc(by, fimg); /*R*/fputc(by, fimg); /*G*/fputc(by, fimg);/*B*/
 				i++;
 			}
-			fprintf(fimg,"%d", *((pimg->pixels) + i));
+
 		}
 		fclose(fimg);
 		return PNM_OK;
@@ -137,13 +138,13 @@ int escribir_imagen(const Imagen* pimg, const char* ruta)
 
 CodigoError ignorar_coment_esp(FILE *f)
 {
-	char c;	
+	char c;
 	do
 	{
 		c = fgetc(f); CATCH_EOF_EN_ENCABEZADO;
-	}	
+	}
 	while((c != '\n') && isspace(c));
-	
+
 	if (c != '\n')
 		ungetc(c, f);
 	else
@@ -153,18 +154,18 @@ CodigoError ignorar_coment_esp(FILE *f)
 		{
 			do /*Encuentro comentario*/
 			{
-				while((c = fgetc(f)) != '\n') 
+				while((c = fgetc(f)) != '\n')
 					CATCH_EOF_EN_ENCABEZADO;
 				CATCH_EOF_EN_ENCABEZADO;
 			}while((c = fgetc(f)) == '#');
-			
+
 			ungetc(c, f);
 			ignorar_coment_esp(f);
 		}else if (isspace(c))
 		{
 			ungetc(c, f);
 			ignorar_coment_esp(f);
-		}		
+		}
 		else
 			ungetc(c, f);
 	}
@@ -207,14 +208,14 @@ CodigoError leer_encabezado(FILE *f, char *Mn, int *n, int *m, int *M)
 
 	cod_temp = leer_num(n, f); CATCH_ERR_LEERNUM;
 	cod_temp = ignorar_coment_esp(f); CATCH_ERR_IGNOR_COM_ESP;
-	
+
 
 	cod_temp = leer_num(m, f); CATCH_ERR_LEERNUM;
 	cod_temp = ignorar_coment_esp(f); CATCH_ERR_IGNOR_COM_ESP;
-	
+
 	cod_temp = leer_num(M, f); CATCH_ERR_LEERNUM;
 
-	
+
 	#undef CATCH_ERR_LEERNUM
 	#undef	CATCH_ERR_IGNOR_COM_ESP
 	return PNM_OK;
@@ -283,7 +284,7 @@ int clipear(int coordenada, int limite_inf, int limite_sup)
 {
     if (coordenada < limite_inf)
 	return 0;
-    else if (coordenada >= limite_sup) 
+    else if (coordenada >= limite_sup)
 	return limite_sup;
     else
 	return coordenada;
@@ -306,7 +307,7 @@ void convertir_pixel_int(byte *r, byte *g, byte *b, Pixel *pix, char *op)
 	}else if (strcmp(op, "IntACanales") == 0)
 	{
 		Pixel ptemp = *pix;
-		
+
 		*b = ptemp;
 		ptemp >>= 8;
 		*g = ptemp;
@@ -314,7 +315,7 @@ void convertir_pixel_int(byte *r, byte *g, byte *b, Pixel *pix, char *op)
 		*r = ptemp;
 	}
 }
-		
+
 void convertir_a_grises(const Imagen in, Imagen out)
 {
 	int i;

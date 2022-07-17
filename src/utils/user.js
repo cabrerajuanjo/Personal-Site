@@ -26,7 +26,7 @@ const mainRender = (res) => {
 }
 
 const deleteFile = (fileName) => {
-    const filePathToClean = path.join(__dirname, '../../uploads/') + fileName;
+    const filePathToClean = path.join(__dirname, '../../public/results/') + fileName;
     fs.unlink(filePathToClean, (err) => {
         if (err) throw err;
         console.log('File deleted!');
@@ -41,7 +41,7 @@ const cleanUserArray = () => {
         console.log(currentTimeStamp);
         console.log(parseInt(uuidTime(userUUID), 10));
         console.log( (currentTimeStamp - parseInt(uuidTime(userUUID), 10)))
-        if( !uuid.validate(userUUID) || (currentTimeStamp - parseInt(uuidTime(userUUID), 10)) >  5000)
+        if( !uuid.validate(userUUID) || (currentTimeStamp - parseInt(uuidTime(userUUID), 10)) >  500000)
         {
             const fileName = Object.values(element)[0]
             if(fileName)
@@ -55,7 +55,7 @@ const cleanUserArray = () => {
 }
 
 var scheduleCleanup = new cronJob(
-	'0-59/30 * * * * *',
+	'0 */30  * * * *',
 	cleanUserArray,
 	null,
 	true,

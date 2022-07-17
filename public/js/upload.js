@@ -30,7 +30,7 @@ const displayOptions = () => {
     if (filter === "mirror" || filter === "edges")
     {
         optionContainer.innerHTML += `
-        <select id="filter-option" name="filter-option">
+        <select id="filter_option" name="filter_option">
           <option value="0">Vertical</option>
           <option value="1">Horizontal</option>
           <option value="2" selected>Horizontal and vertical</option>
@@ -39,7 +39,7 @@ const displayOptions = () => {
     }else if(filter === "caricature")
     {
         optionContainer.innerHTML += `
-        <input type="number" id="filter-option" name="filter-option" value="5" min="0" max="255">
+        <input type="number" id="filter_option" name="filter_option" value="5" min="0" max="255">
         `
     }
 
