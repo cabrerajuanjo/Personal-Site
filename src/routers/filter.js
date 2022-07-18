@@ -33,7 +33,6 @@ const upload = multer({
     limits: {
         fileSize: 10000000
     },
-
 })
 
 router.get('/filter/upload', (req, res) => {
@@ -42,15 +41,9 @@ router.get('/filter/upload', (req, res) => {
         title: 'Upload Image',
         name: 'Juanjo'
     })
-    //filter.filter("", "")
 })
 
 router.post('/filter/result', upload.single('input_img'), validatorMiddleware, async (req, res) => {
-    console.log("File name on server ", req.file.filename);
-    console.log("File path on server ", req.file.path);
-    console.log("Original name ", req.file.originalname);
-    console.log("Filter options", req.body);
-
     const out = convertFileToPPM(req.file.filename, 'out-' + req.file.filename + '.ppm', () => {
         filter('out-' + req.file.filename + '.ppm', req.body.filter, req.body.filter_option, req.file.filename + '.ppm', () => {
             convertToOriginalFileType(req.file.filename + '.ppm', req.file.filename, () => {
@@ -61,8 +54,6 @@ router.post('/filter/result', upload.single('input_img'), validatorMiddleware, a
             });
         });
     });
-
-
 })
 
 const filterRouter = router;

@@ -26,10 +26,13 @@ const mainRender = (res) => {
 }
 
 const deleteFile = (fileName) => {
-    const filePathToClean = path.join(__dirname, '../../public/results/') + fileName;
-    fs.unlink(filePathToClean, (err) => {
-        if (err) throw err;
-        console.log('File deleted!');
+    const filePathToCleanResults = path.join(__dirname, '../../public/results/') + fileName;
+    const filePathToCleanUploads = path.join(__dirname, '../../uploads/') + fileName;
+    fs.unlink(filePathToCleanResults, (err) => {
+        if (!err) console.log('File deleted!');
+    });
+    fs.unlink(filePathToCleanUploads, (err) => {
+        if (!err) console.log('File deleted!');
     });
 }
 
@@ -38,10 +41,7 @@ const cleanUserArray = () => {
     userFilesLookup.forEach((element, index) => {
         userUUID = Object.keys(element)[0];
         currentTimeStamp = new Date().getTime();
-        console.log(currentTimeStamp);
-        console.log(parseInt(uuidTime(userUUID), 10));
-        console.log( (currentTimeStamp - parseInt(uuidTime(userUUID), 10)))
-        if( !uuid.validate(userUUID) || (currentTimeStamp - parseInt(uuidTime(userUUID), 10)) >  500000)
+        if( !uuid.validate(userUUID) || (currentTimeStamp - parseInt(uuidTime(userUUID), 10)) >  600000)
         {
             const fileName = Object.values(element)[0]
             if(fileName)
@@ -55,7 +55,7 @@ const cleanUserArray = () => {
 }
 
 var scheduleCleanup = new cronJob(
-	'0 */30  * * * *',
+	'0 */15  * * * *',
 	cleanUserArray,
 	null,
 	true,
@@ -72,7 +72,6 @@ const validatorMiddleware = (req, res, next) => {
                 if(userFilesLookup[index][req.body.userID] !== '')
                 {
                     deleteFile(userFilesLookup[index][req.body.userID]);
-
                 }
                 foundID = true;
                 (userFilesLookup[index])[req.body.userID] = req.file.filename;
@@ -80,7 +79,7 @@ const validatorMiddleware = (req, res, next) => {
             }
         }
     })
-    //return mainRender(res);
+
     if ((userFilesLookup.length === 0) || (foundID === false))
     {
         deleteFile(req.file.filename);

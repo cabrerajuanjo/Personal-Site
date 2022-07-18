@@ -18,25 +18,15 @@ const convertFileToPPM = (fileNameInput, fileNameOutput, callback) => {
         .raw()
         .removeAlpha()
         .toBuffer((error, data, info) =>{
-            if(error) return error
-            console.log(info.width)
-            console.log(info.height)
+            if(error) throw error;
             const headerString = '50360A' + imageInfoToHex(info.width) + '20' + imageInfoToHex(info.height) + '0A3235350A'
             const fileHeader = new Buffer.from(headerString, 'hex');
 
-            fs.writeFile(filePathWrite, fileHeader, { flag: 'w' }, err => {
-                if(!err){
-                    fs.writeFile(filePathWrite, data, { flag: 'a+' }, err => {
-                        if(!err){
-                            fs.unlink(filePathRead, (err) => {
-                                if (err) throw err;
-                                callback();
-                            });
-                        }
-                    });
-                }
-            });
-        })
+            fs.writeFileSync(filePathWrite, fileHeader, { flag: 'w' })
+            fs.writeFileSync(filePathWrite, data, { flag: 'a+' });
+            fs.unlink(filePathRead, (err) => {if(err) throw err;});
+            callback();
+        });
 }
 
 const getHeaderDataFromPPM = (data, start, end) => {
@@ -52,42 +42,38 @@ const getHeaderDataFromPPM = (data, start, end) => {
 const convertToOriginalFileType = (fileNameInput, fileNameOutput, callback) => {
     const filePathRead = path.join(__dirname, '../../uploads/') + fileNameInput;
     const filePathWrite = path.join(__dirname, '../../public/results/') + fileNameOutput;
-    fs.readFile(filePathRead, (err, data) => {
-        if(!err)
-        {
-            // Get 3rd CR caracter from file (start of raw pixel data)
-            const firstCR = data.indexOf('0A', 'hex')
-            const secondCR = data.indexOf('0A', firstCR + 1 , 'hex')
-            const startOfRawPixelData = data.indexOf('0A', secondCR + 1 , 'hex') + 1;
+    const data = fs.readFileSync(filePathRead)
+    if(data)
+    {
+        // Get 3rd CR caracter from file (start of raw pixel data)
+        const firstCR = data.indexOf('0A', 'hex')
+        const secondCR = data.indexOf('0A', firstCR + 1 , 'hex')
+        const startOfRawPixelData = data.indexOf('0A', secondCR + 1 , 'hex') + 1;
+        const firstSpace = data.indexOf('20', 'hex')
 
-            const firstSpace = data.indexOf('20', 'hex')
-            const width = getHeaderDataFromPPM(data, firstCR + 1, firstSpace);
-            console.log(width)
-            const height = getHeaderDataFromPPM(data, firstSpace + 1, secondCR);
-            console.log(height)
+        const width = getHeaderDataFromPPM(data, firstCR + 1, firstSpace);
+        const height = getHeaderDataFromPPM(data, firstSpace + 1, secondCR);
 
-            //slice bufer from startOfRawPixelData
-            const rawPixelDataBuffer = data.subarray(startOfRawPixelData, data.length);
-            //load it into Sharp
-            // fs.writeFile(filePathWrite + 'raw', rawPixelDataBuffer, { flag: 'w' }, (err) => {});
-            sharp(rawPixelDataBuffer, {
-                    raw: {
-                        width,
-                        height,
-                        channels: 3
-                    }
-                })
-            //save it as a png or jpg
-                .toFile(filePathWrite)
-            //delete previous file
-                .then((info) => fs.unlink(filePathRead, (err) => {
-                    if(err) throw err;
-                    callback()
-                }))
-                .catch((err) => {throw err})
-
-        }
-    })
+        //slice bufer from startOfRawPixelData
+        const rawPixelDataBuffer = data.subarray(startOfRawPixelData, data.length);
+        //load it into Sharp
+        // fs.writeFile(filePathWrite + 'raw', rawPixelDataBuffer, { flag: 'w' }, (err) => {});
+        sharp(rawPixelDataBuffer, {
+                raw: {
+                    width,
+                    height,
+                    channels: 3
+                }
+            })
+        //save it as a png or jpg
+            .toFile(filePathWrite)
+        //delete previous file
+            .then((info) => {
+                fs.unlink(filePathRead, (err) => {if(err) throw err;});
+                callback();
+            })
+            .catch((err) => {throw err})
+    }
 }
 
 
