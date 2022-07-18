@@ -15,6 +15,7 @@ const convertFileToPPM = (fileNameInput, fileNameOutput, callback) => {
     const filePathRead = path.join(__dirname, '../../uploads/') + fileNameInput;
     const filePathWrite = path.join(__dirname, '../../uploads/') + fileNameOutput;
     sharp(filePathRead)
+        .resize(1000, null)
         .raw()
         .removeAlpha()
         .toBuffer((error, data, info) =>{
