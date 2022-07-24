@@ -23,6 +23,7 @@ const disableUpload = () => {
     document.getElementById("get-processed-image-button").setAttribute('disabled', '');
 }
 
+//Display diferent options acording to selected filter
 const displayOptions = () => {
     const filter = document.getElementById("filter").value;
     const optionContainer = document.getElementById("filter-option-container");
@@ -31,9 +32,9 @@ const displayOptions = () => {
     {
         optionContainer.innerHTML += `
         <select id="filter_option" name="filter_option">
-          <option value="0">Vertical</option>
-          <option value="1">Horizontal</option>
-          <option value="2" selected>Horizontal and vertical</option>
+            <option value="0">Horizontal</option>
+            <option value="1">Vertical</option>
+            <option value="2" selected>Horizontal and vertical</option>
         </select>
         `;
     }else if(filter === "caricature")

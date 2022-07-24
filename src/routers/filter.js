@@ -19,6 +19,7 @@ router.use(express.urlencoded({
   extended: true
 }));
 
+//Sets an unique identifier + original name as the file name
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null,path.join(__dirname, '../../uploads/'));
@@ -27,6 +28,7 @@ const storage = multer.diskStorage({
         cb(null, uuid() + '-' + file.originalname);
     }
 })
+
 
 const upload = multer({
     storage,
@@ -43,6 +45,7 @@ router.get('/filter/upload', (req, res) => {
     })
 })
 
+//Converts it to PPM then process it through filter program and then converts it back to original file type
 router.post('/filter/result', upload.single('input_img'), validatorMiddleware, async (req, res) => {
     const out = convertFileToPPM(req.file.filename, 'out-' + req.file.filename + '.ppm', () => {
         filter('out-' + req.file.filename + '.ppm', req.body.filter, req.body.filter_option, req.file.filename + '.ppm', () => {

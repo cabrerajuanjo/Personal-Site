@@ -13,12 +13,13 @@
             <p></p>
 
             <form enctype="multipart/form-data" action="/filter/result" method="POST" name="filetoupload" >
+                <label for="image_file">Select an image file:</label>
                 <input id="image_file" type="file" name="input_img" onChange="preprocessFile()" required>
                 <input id="show_preview" type="checkbox" name="Show preview" value="">
                 <label for="Show preview">Show preview</label>
                 <br>
                 <br>
-                <label for="filter">Choose a filter</label>
+                <label for="filter">Choose a filter:</label>
                 <select id="filter" name="filter" onChange="displayOptions()">
                   <option value="copy">Copy</option>
                   <option value="negative" selected>Negative</option>
